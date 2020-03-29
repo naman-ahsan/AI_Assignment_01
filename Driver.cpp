@@ -62,30 +62,30 @@ bool findInQueue(queue<Node*>& frontier, Node* node)
 
 int main()
 {
+	//opening file to take input
 	freopen("input.txt", "r", stdin);
-	//freopen("output.txt", "w", stdout);
-	//All Resources
+	
 	int m, n, t;
-	string* states, * actions;
-	string startAndEndState;
-	string startState;
-	string endState;
-	int** tt;
+	string* states, *actions;
+	string testCase;
+	string start;
+	string end;
+	int** transitionTable;
 
-	//Taking No of States, No of Actions, No of test cases
+	//Taking No of States, No of Actions, No of test cases from the file directly
 	cin >> m >> n >> t;
 
 	//Initialize the Resources
 	states = new string[m];
 	actions = new string[n];
-	tt = new int* [m];
+	transitionTable = new int*[m];
 
 	for (int i = 0; i < m; i++)
-		tt[i] = new int[n];
+		transitionTable[i] = new int[n];
 
 	getchar();
 
-	//Collect Description of States
+	//Getting the description of the states
 	for (int i = 0; i < m; i++)
 	{
 		if (i == 0)
@@ -95,15 +95,15 @@ int main()
 
 	getchar();
 
-	//Taking Description of Actions
+	//Getting Description of Actions
 	for (int i = 0; i < n; i++)
 		getline(cin, actions[i]);
 
 	getchar();
 
-	//Taking data about next actions at a given state
+	//Getting data about next actions at a given state
 	for (int i = 0; i < m; i++)
-		cin >> tt[i][0] >> tt[i][1] >> tt[i][2];
+		cin >> transitionTable[i][0] >> transitionTable[i][1] >> transitionTable[i][2];
 
 	getchar();
 	getchar();
@@ -112,26 +112,26 @@ int main()
 	{
 		set<Node*>explored;
 		bool flag = false;
-		getline(cin, startAndEndState);
+		getline(cin, testCase);
 
-		startState = startAndEndState.substr(0, (startAndEndState.find("\t")));
+		start = testCase.substr(0, (testCase.find("\t")));
 
-		endState = startAndEndState.substr((startAndEndState.find("\t")) + 1);
+		end = testCase.substr((testCase.find("\t")) + 1);
 
 		int startStateInt = 0;
 
 		int endStateInt = 0;
-
+		//comparing the states with the starting state
 		for (int j = 0; j < m; j++)
 		{
-			if (!startState.compare(states[j]))
+			if (!start.compare(states[j]))
 				break;
 			startStateInt++;
 		}
-
+		//comparing states with ending state
 		for (int j = 0; j < m; j++)
 		{
-			if (!endState.compare(states[j]))
+			if (!end.compare(states[j]))
 				break;
 			endStateInt++;
 		}
@@ -143,7 +143,7 @@ int main()
 		frontier.push(startNode);
 
 		Node* node = NULL;
-
+		//Program starts
 		while (!frontier.empty())
 		{
 			node = frontier.front();
@@ -152,17 +152,17 @@ int main()
 			if ((*node).state == endStateInt)
 			{
 				flag = true;
-				stack<int> recordAction;
+				stack<int> outputActions;
 
-				while (node->action!=-1)
+				while (node->action != -1)
 				{
-					recordAction.push(node->action);
+					outputActions.push(node->action);
 					node = node->parent;
 				}
 
-				while (!recordAction.empty())
+				while (!outputActions.empty())
 				{
-					switch (recordAction.top())
+					switch (outputActions.top())
 					{
 					case 0:
 						cout << "Clean";
@@ -176,8 +176,8 @@ int main()
 					default:
 						break;
 					}
-					recordAction.pop();
-					if (!recordAction.empty())
+					outputActions.pop();
+					if (!outputActions.empty())
 						cout << "->";
 					else
 						cout << endl;
@@ -191,7 +191,7 @@ int main()
 
 				for (int i = 0; i < n; i++)
 				{
-					Node* tempNode = new Node(node, tt[(*node).state][i], i, ((*node).pathCost) + 1);
+					Node* tempNode = new Node(node, transitionTable[(*node).state][i], i, ((*node).pathCost) + 1);
 
 					if (!findInSet(explored, tempNode))
 					{
